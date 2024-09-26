@@ -5,7 +5,7 @@ import pLimit from 'p-limit'
 
 const USER_TOKEN = process.env.USER_TOKEN || 'user-token'
 const LANGUAGE = process.env.LANGUAGE || 'Javascript'
-const DATE = process.env.DATE || '2023-01-0'
+const DATE = process.env.DATE || '2023-01-01'
 
 let MAX_STARS = Number.MIN_SAFE_INTEGER
 let MAX_FORKS = Number.MIN_SAFE_INTEGER
