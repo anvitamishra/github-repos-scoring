@@ -80,7 +80,7 @@ const getRepositories = async() => {
  *   across all repositories.
  * [ ChatGPT suggested that I use these to normalize the data. ]
  */
-const getMaxValues = async (repositories) => {
+const getMaxValues = async(repositories) => {
 
   for (const repo of repositories) {
     const { stargazers_count: stars, forks } = repo
@@ -100,7 +100,7 @@ const getMaxValues = async (repositories) => {
  *   for stars, forks, and days since last update.
  * [ Asked ChatGPT to give me a method for score calculation and refactored that ]
  */
-const scoringAlgorithm = async (repository, { maxStars, maxForks, maxDaysSinceUpdate }) => {
+const scoringAlgorithm = async(repository, { maxStars, maxForks, maxDaysSinceUpdate }) => {
   const today = Date.now()
   const factors = ['stargazers_count', 'forks', 'updated_at']
 
@@ -154,6 +154,7 @@ const main = async () => {
   console.log('Fetching repositories...')
   const repositories = await getRepositories()
 
+  console.log('Calculating max values...')
   const maxValues = await getMaxValues(repositories)
 
   console.log('Processing repositories...')
