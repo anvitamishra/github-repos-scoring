@@ -3,9 +3,9 @@ import { throttling } from '@octokit/plugin-throttling'
 
 import pLimit from 'p-limit'
 
-const USER_TOKEN = process.env.USER_TOKEN
-const LANGUAGE = process.env.LANGUAGE
-const DATE = process.env.DATE
+const USER_TOKEN = process.env.USER_TOKEN || 'user-token'
+const LANGUAGE = process.env.LANGUAGE || 'Javascript'
+const DATE = process.env.DATE || '2023-01-0'
 
 let MAX_STARS = Number.MIN_SAFE_INTEGER
 let MAX_FORKS = Number.MIN_SAFE_INTEGER
@@ -149,13 +149,14 @@ const main = async () => {
   }
 }
 
-const startTime = performance.now()
-await main()
-const endTime = performance.now()
+// const startTime = performance.now()
+// await main()
+// const endTime = performance.now()
 
-console.log('Total time taken:', (endTime - startTime) / 1000, 'seconds')
+// console.log('Total time taken:', (endTime - startTime) / 1000, 'seconds')
 
 export {
   getMaxValues,
-  scoringAlgorithm
+  scoringAlgorithm,
+  getRepositories
 }

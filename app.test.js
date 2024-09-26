@@ -50,9 +50,26 @@ const repositories = [
   }
 ]
 
-test('Should calculate a popularity score', async t => {
-    const maxValues = await getMaxValues(repositories)
-    const results = await Promise.all(repositories.map(repo => scoringAlgorithm(repo, maxValues)))
+test('getMaxValues() should return the maximum values for stars, forks, and daysSinceUpdate', async (t) => {
+  const results = await getMaxValues(repositories)
 
-    t.true(results.every(repo => repo.popularityScore >= 0 && repo.popularityScore <= 1), 'Final score should be between 0 and 1')
-  })
+  const date = repositories[3].updated_at // oldest date
+  const expectedDaysSinceUpdate = Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
+
+  t.is(results.maxStars, 1000)
+  t.is(results.maxForks, 99)
+  t.is(results.maxDaysSinceUpdate, expectedDaysSinceUpdate)
+})
+
+test('scoringAlgorithm() should calculate a popularity score', async t => {
+  const maxValues = await getMaxValues(repositories)
+  const results = await Promise.all(repositories.map(repo => scoringAlgorithm(repo, maxValues)))
+
+  t.true(results.every(repo => repo.popularityScore >= 0 && repo.popularityScore <= 1), 'Final score should be between 0 and 1')
+
+  t.is(results[0].popularityScore, '0.249')
+  t.is(results[1].popularityScore, '0.925')
+  t.is(results[2].popularityScore, '0.388')
+  t.is(results[3].popularityScore, '0.000')
+  t.is(results[4].popularityScore, '0.041')
+})
