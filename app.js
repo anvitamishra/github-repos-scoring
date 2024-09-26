@@ -55,6 +55,7 @@ const getRepositories = async() => {
   for await (const response of octokit.paginate.iterator(octokit.rest.search.repos,
     {
       q: queryString,
+      // if we get a higher number, we can avoid bombarding the GitHub API with requests
       per_page: 100
     }
   )) {
@@ -122,7 +123,6 @@ const scoringAlgorithm = async (repository, { maxStars, maxForks, maxDaysSinceUp
     }
 
     score += normalized * weight
-
     return score
   }, 0)
 
@@ -134,21 +134,34 @@ const scoringAlgorithm = async (repository, { maxStars, maxForks, maxDaysSinceUp
   return result
 }
 
+// [ Asked ChatGPT to give me a function for batch processing ]
+const processInBatches = async (repositories, maxValues, batchSize = 100) => {
+  for (let i = 0; i < repositories.length; i += batchSize) {
+    const batch = repositories.slice(i, i + batchSize)
+
+    const popularityScores = await Promise.all(
+      batch.map(repo => limit(() => scoringAlgorithm(repo, maxValues)))
+    )
+
+    popularityScores.forEach(score => console.log(score))
+  }
+}
+
 /**
  * Outputs the popularity scores for all the repositories.
  */
 const main = async () => {
+  console.log('Fetching repositories...')
   const repositories = await getRepositories()
+
   const maxValues = await getMaxValues(repositories)
 
-  const promises = repositories.map(repo => limit(() => scoringAlgorithm(repo, maxValues)))
-
-  for (const promise of promises) {
-    const popularityScore = await promise
-    console.log(popularityScore)
-  }
+  console.log('Processing repositories...')
+  await processInBatches(repositories, maxValues, 50)
 }
 
+// Rough estimation of how long the whole thing takes
+// to make performance improvements
 const startTime = performance.now()
 await main()
 const endTime = performance.now()
