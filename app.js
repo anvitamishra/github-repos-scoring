@@ -149,11 +149,11 @@ const main = async () => {
   }
 }
 
-// const startTime = performance.now()
-// await main()
-// const endTime = performance.now()
+const startTime = performance.now()
+await main()
+const endTime = performance.now()
 
-// console.log('Total time taken:', (endTime - startTime) / 1000, 'seconds')
+console.log('Total time taken:', (endTime - startTime) / 1000, 'seconds')
 
 export {
   getMaxValues,
